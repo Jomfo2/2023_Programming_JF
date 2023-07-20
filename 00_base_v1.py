@@ -23,9 +23,9 @@ yes_no_list = ["yes", "no"]
 payment_list = ["cash", "credit"]
 
 for case in range(0, 4):
-    want_instructions = string_checker("Do you want to read the instructions? (y/n): ", 1, yes_no_list)
-    if want_instructions == 1:
-        print("instructions ge here...")
+    want_menu = string_checker("Do you want to read the instructions? (y/n): ", 1, yes_no_list)
+    if want_menu == 1:
+        print("menu goes here...")
     else:
         print("continues...")
 
