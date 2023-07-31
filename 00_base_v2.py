@@ -1,3 +1,6 @@
+import pandas
+
+
 # functions go here
 # function to get info from input
 def string_checker(question, num_letters, valid_responses):
@@ -64,20 +67,38 @@ def order_loop(sold, maximum, question):
             pass
 
 
+# currency formatting function
+def currency(x):
+    return "${:.2f}".format(x)
+
+
 # main routine starts here
 yes_no_list = ["yes", "no"]
 payment_list = ["cash", "credit"]
 item_list = ["a", "b", "c", "d", "e"]
+price_list = [4, 5, 5, 5, 6]
 order_list = []
 
-# set maximum number of items here
+# set number of items here
 MAX_ORDER = 5
 pizzas_sold = 0
 
+# e
+pizza_dict = {
+    "Item": item_list,
+    "Price": price_list,
+}
+
+pizza_frame = pandas.DataFrame(pizza_dict)
+pizza_frame = pizza_frame.set_index('Item')
+
+# formatting currency
+pizza_frame['Price'] = pizza_frame['Price'].apply(currency)
+
 # asks if users want to see menu
 want_menu = string_checker("Do you want to read the instructions? (y/n): ", 1, yes_no_list)
-if want_menu == 1:
-    print("menu goes here...")
+if want_menu == "yes":
+    print(pizza_frame)
 else:
     print("continues...")
 
