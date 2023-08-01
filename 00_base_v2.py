@@ -35,36 +35,51 @@ def num_check(question):
             print("Please enter an integer.")
 
 
+# prints instruction on how to use program
+def show_instructions():
+    print("Instructions go here...")
+
+
 # function to get order
 def order_loop(sold, maximum, question):
-    total = 0
+    valid = 0
     while sold < maximum:
         response = input(question).lower()
 
         if response == "x" or response == "exit":
             break
+        elif response == "instructions":
+            show_instructions()
         elif response == "menu":
             pass
-        elif response in item_list:
+        if response in item_list:
             item = response
+            valid = 1
         else:
             try:
-                item = item_list[int(response) - 1]
+                if int(response) > 0:
+                    item = item_list[int(response) - 1]
+                    valid = 1
+                else:
+                    print("input a valid item or id")
             except ValueError:
-                print("input a valid item or id: ")
-                pass
+                print("input a valid item or id")
 
-        amount = int(input("How many of this item would you like to order? "))
+        if valid == 1:
+            amount = input("How many of this item would you like to order? ")
 
-        if (sold + amount) <= maximum:
-            sold += amount
-            while amount > 0:
-                order_list.append(item)
-                amount -= 1
-            print(order_list)
-        else:
-            print("Please order no more than {} items at a time".format(maximum))
-            pass
+            try:
+                amount = int(amount)
+                if (sold + amount) <= maximum:
+                    sold += amount
+                    while amount > 0:
+                        order_list.append(item)
+                        amount -= 1
+                    print(order_list)
+                else:
+                    print("Please order no more than {} items at a time".format(maximum))
+            except ValueError:
+                print("Please input a valid item or id: ")
 
 
 # currency formatting function
@@ -84,21 +99,27 @@ MAX_ORDER = 5
 pizzas_sold = 0
 
 # e
-pizza_dict = {
+item_dict = {
     "Item": item_list,
     "Price": price_list,
 }
 
-pizza_frame = pandas.DataFrame(pizza_dict)
-pizza_frame = pizza_frame.set_index('Item')
+item_frame = pandas.DataFrame(item_dict)
+item_frame = item_frame.set_index('Item')
 
 # formatting currency
-pizza_frame['Price'] = pizza_frame['Price'].apply(currency)
+item_frame['Price'] = item_frame['Price'].apply(currency)
 
 # asks if users want to see menu
-want_menu = string_checker("Do you want to read the instructions? (y/n): ", 1, yes_no_list)
+want_instructions = string_checker("Do you want to read the instructions? (y/n): ", 1, yes_no_list)
+if want_instructions == "yes":
+    show_instructions()
+else:
+    print("continues...")
+
+want_menu = string_checker("Do you want to view the menu? (y/n): ", 1, yes_no_list)
 if want_menu == "yes":
-    print(pizza_frame)
+    print(item_frame)
 else:
     print("continues...")
 
