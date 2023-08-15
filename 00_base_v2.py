@@ -2,7 +2,7 @@ import pandas
 
 
 # functions go here
-# function to get info from input
+# checks if input is string then compares with valid responses
 def string_checker(question, num_letters, valid_responses):
 
     error = "Please choose {} or {}".format(valid_responses[0], valid_responses[1])
@@ -43,8 +43,10 @@ def show_instructions():
 # function to get order
 def order_loop(sold, maximum, question):
     valid = 0
+    item = 0
     while sold < maximum:
-        response = input(question).lower()
+        valid = 0
+        response = input(question).casefold()
 
         if response == "x" or response == "exit":
             break
@@ -73,9 +75,12 @@ def order_loop(sold, maximum, question):
                 if (sold + amount) <= maximum:
                     sold += amount
                     while amount > 0:
-                        order_list.append(item)
+                        order_list.append(item.capitalize())
+                        total_index = item_list.index(item)
+                        total_list.append(price_list[total_index])
                         amount -= 1
                     print(order_list)
+                    print(total_list)
                 else:
                     print("Please order no more than {} items at a time".format(maximum))
             except ValueError:
@@ -88,20 +93,26 @@ def currency(x):
 
 
 # main routine starts here
+# setting variables here
 yes_no_list = ["yes", "no"]
 payment_list = ["cash", "credit"]
-item_list = ["a", "b", "c", "d", "e"]
-price_list = [4, 5, 5, 5, 6]
-order_list = []
+location_list = ["delivery", "pickup", "pick up"]
+item_list = ["Cheese", "Ham and Cheese", "Pepperoni", "Hawaiian", "Vegan", "Meat Lovers"]
+price_list = [4, 5, 5, 5, 6, 6.5]
+order_list = [""]
+total_list = [0]
 
-# set number of items here
 MAX_ORDER = 5
 pizzas_sold = 0
 
-# e
 item_dict = {
     "Item": item_list,
-    "Price": price_list,
+    "Price": price_list
+}
+
+pizza_dict = {
+    "Item Ordered": order_list,
+    "Total Price": total_list
 }
 
 item_frame = pandas.DataFrame(item_dict)
@@ -124,11 +135,20 @@ else:
     print("continues...")
 
 # order loop
+order_list.clear()
+total_list.clear()
 order_loop(pizzas_sold, MAX_ORDER, "Input: ")
+pizza_frame = pandas.DataFrame(pizza_dict)
+pizza_frame = pizza_frame.set_index('Item Ordered')
+pizza_frame['Total Price'] = pizza_frame['Total Price'].apply(currency)
+
+
+print(pizza_frame)
+
+# delivery?
+delivery_method = string_checker("Choose pickup or delivery: ", 2, location_list)
+print("You chose", delivery_method)
 
 # asks users for payment method
 pay_method = string_checker("Choose a payment method (cash / credit): ", 2, payment_list)
 print("You chose", pay_method)
-
-# output number of items sold
-print("You have sold {} item/s. There are now {} item/s remaining".format(pizzas_sold, MAX_ORDER - pizzas_sold))
