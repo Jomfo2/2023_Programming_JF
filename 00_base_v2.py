@@ -52,8 +52,6 @@ def order_loop(sold, maximum, question):
             break
         elif response == "instructions":
             show_instructions()
-        elif response == "menu":
-            pass
         if response in item_list:
             item = response
             valid = 1
@@ -97,7 +95,7 @@ def currency(x):
 yes_no_list = ["yes", "no"]
 payment_list = ["cash", "credit"]
 location_list = ["delivery", "pickup", "pick up"]
-item_list = ["Cheese", "Ham and Cheese", "Pepperoni", "Hawaiian", "Vegan", "Meat Lovers"]
+item_list = ["cheese", "ham and cheese", "pepperoni", "hawaiian", "vegan", "meat lovers"]
 price_list = [4, 5, 5, 5, 6, 6.5]
 order_list = [""]
 total_list = [0]
@@ -140,15 +138,24 @@ total_list.clear()
 order_loop(pizzas_sold, MAX_ORDER, "Input: ")
 pizza_frame = pandas.DataFrame(pizza_dict)
 pizza_frame = pizza_frame.set_index('Item Ordered')
-pizza_frame['Total Price'] = pizza_frame['Total Price'].apply(currency)
-
+# pizza_frame['Total Price'] = pizza_frame['Total Price'].apply(currency)
 
 print(pizza_frame)
 
 # delivery?
 delivery_method = string_checker("Choose pickup or delivery: ", 2, location_list)
-print("You chose", delivery_method)
+
+# name input
+order_name = input("What is the name for the order? ")
 
 # asks users for payment method
 pay_method = string_checker("Choose a payment method (cash / credit): ", 2, payment_list)
-print("You chose", pay_method)
+
+if pay_method == "cash":
+    total_price = pizza_frame['Total Price'].sum()
+else:
+    total_price = pizza_frame['Total Price'].sum() * 1.05
+
+pizza_frame['Total Price'] = pizza_frame['Total Price'].apply(currency)
+print(pizza_frame)
+print(total_price)
